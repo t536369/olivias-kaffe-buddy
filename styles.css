@@ -1,0 +1,951 @@
+/* ==========================================================================
+   OLIVIAS KAFFE BUDDY - NEO-BRUTALIST STYLING SYSTEM
+   ========================================================================== */
+
+/* Design Tokens & Theme Variables */
+:root {
+    --bg-primary: #FAF7F2;      /* Varm, moderne havregull/beige */
+    --bg-card: #FFFFFF;         /* Pure white for cards */
+    --bg-dark: #1E1C1A;         /* Deep rich charcoal/black for borders and dark accents */
+    --bg-hover: #F2EFE9;        /* Hover color for standard items */
+    
+    /* Coffee Accent Colors (Neo-Brutalist Palette) */
+    --color-espresso: #4E3629;  /* Rich espresso brown */
+    --color-milk: #F3E5D8;      /* Creamy milk */
+    --color-milk-dark: #D7CCC8; /* Creamy milk border/hover */
+    --color-ice: #E0F2F1;       /* Iced blue-green */
+    --color-chocolate: #3E2723; /* Dark chocolate */
+    --color-accent-gold: #FFB300;/* Bright warning/hack yellow */
+    --color-accent-teal: #26A69A;/* Success/interactive green-teal */
+    
+    /* Typography */
+    --font-title: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    
+    /* Layout Tokens */
+    --border-width: 3px;
+    --border-radius-large: 16px;
+    --border-radius-small: 8px;
+    --shadow-offset: 4px;
+    --transition-fast: 0.1s cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-medium: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Base Resets */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    -webkit-tap-highlight-color: transparent; /* Disable default gray tap highlight on iOS */
+}
+
+body {
+    background-color: #F0EDE8;
+    color: var(--bg-dark);
+    font-family: var(--font-body);
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
+}
+
+/* ==========================================================================
+   DEVICE SIMULATOR (Desktop Wrapper)
+   ========================================================================== */
+.device-simulator {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* Physical Phone Bezel */
+.phone-frame {
+    position: relative;
+    width: 410px;
+    height: 860px;
+    background: var(--bg-dark);
+    border-radius: 48px;
+    padding: 12px;
+    box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25),
+                0px 0px 0px 4px #2E2A28,
+                inset 0px 4px 12px rgba(255, 255, 255, 0.15);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.3s ease;
+}
+
+/* Phone physical buttons mock */
+.phone-volume-buttons {
+    position: absolute;
+    left: -4px;
+    top: 180px;
+    width: 4px;
+    height: 120px;
+    background: #2E2A28;
+    border-radius: 4px 0 0 4px;
+}
+.phone-volume-buttons::before {
+    content: '';
+    position: absolute;
+    top: 50px;
+    left: 0;
+    width: 4px;
+    height: 45px;
+    background: #2E2A28;
+    border-radius: 4px 0 0 4px;
+}
+.phone-power-button {
+    position: absolute;
+    right: -4px;
+    top: 220px;
+    width: 4px;
+    height: 75px;
+    background: #2E2A28;
+    border-radius: 0 4px 4px 0;
+}
+
+/* Phone screen camera punchhole/earpiece */
+.phone-camera {
+    position: absolute;
+    top: 22px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px;
+    height: 12px;
+    background: #111111;
+    border-radius: 50%;
+    z-index: 999;
+}
+.phone-earpiece {
+    position: absolute;
+    top: 15px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 50px;
+    height: 4px;
+    background: #333333;
+    border-radius: 2px;
+    z-index: 999;
+}
+
+/* Inner Phone Screen Container */
+.phone-screen {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    background-color: var(--bg-primary);
+    border-radius: 38px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Phone Status Bar */
+.status-bar {
+    height: 36px;
+    padding: 12px 24px 0 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: -0.2px;
+    color: rgba(30, 28, 26, 0.7);
+    z-index: 900;
+    background-color: transparent;
+    user-select: none;
+}
+.status-icons {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* Responsive Overrides - Melts phone frame away on real mobile screen */
+@media (max-width: 500px) {
+    body {
+        background-color: var(--bg-primary);
+    }
+    .device-simulator {
+        padding: 0;
+        min-height: 100vh;
+    }
+    .phone-frame {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+        padding: 0;
+        box-shadow: none;
+    }
+    .phone-screen {
+        border-radius: 0;
+        height: 100%;
+        width: 100%;
+    }
+    .status-bar {
+        padding-top: 6px;
+        height: 28px;
+    }
+    .phone-camera, .phone-earpiece, .phone-volume-buttons, .phone-power-button {
+        display: none;
+    }
+}
+
+/* ==========================================================================
+   APP CORE LAYOUT
+   ========================================================================== */
+.app-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* App Header */
+.app-header {
+    background-color: #3E2723; /* Mørkebrun kaffebakgrunn fallback */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.45), rgba(0, 0, 0, 0.45)), url('kaffebakgrunn.jpg');
+    background-size: cover;
+    background-position: center;
+    border-bottom: var(--border-width) solid var(--bg-dark);
+    padding: 24px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 100;
+    position: relative;
+}
+
+.header-title-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.header-logo {
+    font-size: 2.5rem;
+    line-height: 1;
+    animation: waveCoffee 4s ease-in-out infinite alternate;
+    display: inline-block;
+    filter: drop-shadow(2px 2px 0px rgba(0,0,0,0.6));
+}
+.header-title {
+    font-family: 'Pacifico', cursive; /* Mer snirklete, elegant skrifttype */
+    font-weight: normal; /* Pacifico er naturlig fet og snirklete */
+    font-size: 2.1rem;
+    line-height: 1.2;
+    color: #FFFFFF; /* Hvit font som etterspurt */
+    text-transform: none; /* Fjern UPPERCASE for snirklete skrift */
+    letter-spacing: normal;
+    text-shadow: 2px 2px 0px #1E1C1A, -1px -1px 0px #1E1C1A, 1px -1px 0px #1E1C1A, -1px 1px 0px #1E1C1A; /* Sterk lesbar kantlinje i neo-brutalistisk/pop-art ånd */
+}
+.header-subtitle {
+    font-size: 0.8rem;
+    font-weight: 800;
+    color: #FFF3E0; /* Varm gulhvit */
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.8);
+}
+
+/* Search Bar (Neo-Brutalist Input) */
+.search-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+.search-icon {
+    position: absolute;
+    left: 14px;
+    font-size: 1.1rem;
+    pointer-events: none;
+    color: var(--bg-dark);
+}
+#recipe-search {
+    width: 100%;
+    padding: 12px 14px 12px 42px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 500;
+    background: var(--bg-card);
+    border: var(--border-width) solid var(--bg-dark);
+    border-radius: 12px;
+    outline: none;
+    transition: all var(--transition-fast);
+}
+#recipe-search:focus {
+    box-shadow: 3px 3px 0px var(--bg-dark);
+}
+#recipe-search::placeholder {
+    color: #9C958E;
+    font-weight: 400;
+}
+.clear-search-btn {
+    position: absolute;
+    right: 12px;
+    background: #EAE5DD;
+    border: 2px solid var(--bg-dark);
+    border-radius: 50%;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    font-size: 9px;
+    font-weight: bold;
+}
+
+/* Category Tab Pill Selector */
+.category-tabs {
+    display: flex;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none; /* Hide standard firefox scrollbar */
+    padding-bottom: 2px;
+}
+.category-tabs::-webkit-scrollbar {
+    display: none; /* Hide webkit scrollbar */
+}
+.category-tab {
+    flex: 1;
+    min-width: fit-content;
+    white-space: nowrap;
+    padding: 8px 14px;
+    font-family: var(--font-title);
+    font-weight: 800;
+    font-size: 0.85rem;
+    background: #F1ECE4;
+    border: 2px solid #DED7CE;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: all var(--transition-fast);
+}
+.category-tab:hover {
+    background-color: var(--bg-hover);
+}
+.category-tab.active {
+    background: var(--bg-card);
+    border: var(--border-width) solid var(--bg-dark);
+    box-shadow: 2px 2px 0px var(--bg-dark);
+    transform: translate(-1px, -1px);
+}
+.category-tab.active:active {
+    transform: translate(1px, 1px);
+    box-shadow: 0px 0px 0px var(--bg-dark);
+}
+
+/* Main Scrollable Content */
+.app-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    padding-bottom: 120px; /* Safe padding for bottom hacks ticker */
+    background: var(--bg-primary);
+    position: relative;
+}
+
+/* Grid & Cards System */
+.recipe-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+/* Neo-Brutalist Drink Cards */
+.recipe-card {
+    background-color: var(--bg-card);
+    border: var(--border-width) solid var(--bg-dark);
+    border-radius: var(--border-radius-large);
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: space-between;
+    text-align: center;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+    box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--bg-dark);
+    transition: all var(--transition-fast);
+    aspect-ratio: 0.95;
+    overflow: hidden;
+}
+
+/* Card Hover/Tap States */
+.recipe-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px var(--bg-dark);
+}
+.recipe-card:active, .recipe-card.pressed {
+    transform: translate(2px, 2px);
+    box-shadow: 1px 1px 0px var(--bg-dark);
+}
+
+/* Categories Badge inside card */
+.card-category-badge {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 6px;
+    border: 1.5px solid var(--bg-dark);
+    pointer-events: none;
+}
+.card-category-badge.small-cup { background-color: var(--color-milk); }
+.card-category-badge.large-cup { background-color: #E2D9F3; }
+.card-category-badge.iced-cup  { background-color: var(--color-ice); }
+
+/* SVG Icon styling */
+.recipe-card-icon-container {
+    width: 64px;
+    height: 64px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 6px;
+    margin-bottom: 8px;
+    transition: transform var(--transition-medium);
+}
+.recipe-card:hover .recipe-card-icon-container {
+    transform: scale(1.15) rotate(-3deg);
+}
+
+/* Drink Card Typography */
+.recipe-card-title {
+    font-family: var(--font-title);
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: -0.2px;
+    text-transform: uppercase;
+    line-height: 1.1;
+    margin-bottom: 4px;
+    color: var(--bg-dark);
+}
+.recipe-card-tagline {
+    font-family: var(--font-body);
+    font-size: 0.72rem;
+    font-style: italic;
+    font-weight: 500;
+    color: var(--text-muted);
+    line-height: 1.25;
+}
+
+/* No Search Results */
+.no-results {
+    text-align: center;
+    padding: 40px 16px;
+    color: var(--bg-dark);
+}
+.no-results-emoji {
+    font-size: 3rem;
+    margin-bottom: 12px;
+}
+.no-results h3 {
+    font-family: var(--font-title);
+    font-size: 1.3rem;
+    margin-bottom: 6px;
+}
+.no-results p {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+/* ==========================================================================
+   STICKY BARISTA HACKS BOTTOM DRAWER / TICKER
+   ========================================================================== */
+.app-footer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: #FFFCEB; /* Soft hack golden highlight background */
+    border-top: var(--border-width) solid var(--bg-dark);
+    padding: 12px 16px;
+    z-index: 500;
+    box-shadow: 0px -4px 10px rgba(0,0,0,0.04);
+}
+
+.hacks-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+}
+.hacks-title-emoji {
+    font-size: 1.1rem;
+    margin-right: 6px;
+}
+.hacks-title-text {
+    font-family: var(--font-title);
+    font-weight: 800;
+    font-size: 0.75rem;
+    letter-spacing: 1px;
+    color: var(--bg-dark);
+    text-transform: uppercase;
+}
+
+/* Carousel Indicators */
+.carousel-indicators {
+    margin-left: auto;
+    display: flex;
+    gap: 5px;
+}
+.indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: #D6D0C2;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+.indicator.active {
+    background-color: var(--bg-dark);
+    transform: scale(1.2);
+}
+
+/* Carousel Frame */
+.hacks-carousel {
+    overflow: hidden;
+    position: relative;
+    width: 100%;
+}
+.hacks-track {
+    display: flex;
+    transition: transform var(--transition-medium);
+    width: 300%; /* 3 slides */
+}
+.hack-slide {
+    width: 33.333%;
+    flex-shrink: 0;
+}
+
+/* Hack Content Cards */
+.hack-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-card);
+    border: 2px solid var(--bg-dark);
+    border-radius: 12px;
+    padding: 8px 12px;
+    min-height: 52px;
+    box-shadow: 2px 2px 0px var(--bg-dark);
+    user-select: none;
+    cursor: grab;
+}
+.hack-card:active {
+    cursor: grabbing;
+}
+.hack-card-icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+}
+.hack-card-body strong {
+    font-family: var(--font-title);
+    font-weight: 800;
+    font-size: 0.78rem;
+    letter-spacing: -0.1px;
+    display: block;
+}
+.hack-card-body p {
+    font-size: 0.72rem;
+    font-weight: 500;
+    line-height: 1.25;
+    color: var(--text-muted);
+}
+
+/* Unique Slide Accent Backgrounds on Taps */
+.hack-card.extramoney { border-color: var(--bg-dark); background: #FFF9C4; }
+.hack-card.steamclean { border-color: var(--bg-dark); background: #E0F2F1; }
+.hack-card.smoothpour { border-color: var(--bg-dark); background: #EDE7F6; }
+
+/* ==========================================================================
+   RECIPE DRAWER (Slide Up Modal)
+   ========================================================================== */
+.drawer-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(30, 28, 26, 0.45);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transition: all var(--transition-medium);
+}
+.drawer-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.recipe-drawer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 80%; /* Takes up 80% of mobile display */
+    background-color: var(--bg-primary);
+    border-top: var(--border-width) solid var(--bg-dark);
+    border-radius: 28px 28px 0 0;
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    transform: translateY(100%);
+    transition: transform var(--transition-medium);
+    box-shadow: 0px -10px 40px rgba(0, 0, 0, 0.15);
+}
+.recipe-drawer.active {
+    transform: translateY(0);
+}
+
+/* Little gray drag handle mockup */
+.drawer-drag-bar {
+    width: 36px;
+    height: 4px;
+    background-color: #D1C9BE;
+    border-radius: 2px;
+    margin: 8px auto 0 auto;
+    flex-shrink: 0;
+}
+
+/* Drawer Header with Title, Tagline and Close */
+.drawer-header {
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px solid #EAE5DD;
+    flex-shrink: 0;
+}
+.drawer-header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.drawer-icon {
+    font-size: 2.2rem;
+}
+.drawer-title {
+    font-family: var(--font-title);
+    font-weight: 800;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    letter-spacing: -0.3px;
+    line-height: 1.1;
+}
+.drawer-recipe-tagline {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    font-style: italic;
+    font-weight: 500;
+}
+.drawer-close-btn {
+    background: #EAE5DD;
+    border: 2px solid var(--bg-dark);
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 800;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all var(--transition-fast);
+}
+.drawer-close-btn:hover {
+    background-color: #DDD4CB;
+}
+.drawer-close-btn:active {
+    transform: scale(0.9);
+}
+
+/* Progress bar inside drawer */
+.recipe-progress-container {
+    padding: 8px 20px;
+    background: #F4EFEB;
+    border-bottom: 2px solid #EAE5DD;
+    flex-shrink: 0;
+}
+.progress-info {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 4px;
+}
+.progress-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+.progress-percentage {
+    font-family: var(--font-title);
+    font-weight: 800;
+    font-size: 0.78rem;
+    color: var(--color-accent-teal);
+}
+.progress-track {
+    width: 100%;
+    height: 8px;
+    background-color: #EAE5DD;
+    border-radius: 4px;
+    overflow: hidden;
+    border: 1px solid #D6CEBF;
+}
+.progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, #A1887F, var(--color-accent-teal));
+    border-radius: 4px;
+    width: 0%;
+    transition: width 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Scrollable Drawer Body */
+.drawer-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.section-title {
+    font-family: var(--font-title);
+    font-weight: 800;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    margin-bottom: 6px;
+    color: var(--bg-dark);
+}
+.checklist-guide {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+}
+
+/* Checklist step items */
+.checklist-items {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+/* Customized interactive step */
+.recipe-step {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px 14px;
+    background: var(--bg-card);
+    border: 2px solid var(--bg-dark);
+    border-radius: 12px;
+    cursor: pointer;
+    box-shadow: 2px 2px 0px var(--bg-dark);
+    transition: all var(--transition-fast);
+    user-select: none;
+}
+.recipe-step:hover {
+    transform: translate(-1px, -1px);
+    box-shadow: 3px 3px 0px var(--bg-dark);
+    background-color: #FFFDF9;
+}
+.recipe-step:active {
+    transform: translate(1px, 1px);
+    box-shadow: 0px 0px 0px var(--bg-dark);
+}
+
+/* Custom checkbox wrapper */
+.step-checkbox {
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--bg-dark);
+    border-radius: 5px;
+    background-color: var(--bg-card);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    margin-top: 1px;
+    transition: all var(--transition-fast);
+    position: relative;
+}
+.step-checkbox::after {
+    content: '✓';
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--bg-card);
+    opacity: 0;
+    transform: scale(0.6);
+    transition: all var(--transition-fast);
+}
+
+/* Checked styling states */
+.recipe-step.checked {
+    background-color: #ECEAE3;
+    border-color: #B5B0A6;
+    box-shadow: 0px 0px 0px var(--bg-dark);
+    transform: none;
+}
+.recipe-step.checked .step-checkbox {
+    background-color: var(--color-accent-teal);
+    border-color: var(--color-accent-teal);
+}
+.recipe-step.checked .step-checkbox::after {
+    opacity: 1;
+    transform: scale(1);
+}
+.recipe-step.checked .step-text {
+    text-decoration: line-through;
+    color: #8C847A;
+    font-weight: 400;
+}
+
+/* Text inside steps */
+.step-text {
+    font-size: 0.85rem;
+    font-weight: 500;
+    line-height: 1.4;
+    transition: all var(--transition-fast);
+}
+/* Highlight inside step text (like actions) */
+.step-text strong {
+    font-family: var(--font-title);
+    font-weight: 800;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    background-color: #FFF3E0;
+    padding: 1px 4px;
+    border-radius: 4px;
+    color: #D84315;
+}
+
+/* Neo-Brutalist Alerts (Warnings & Husk-boks) */
+.alert-box {
+    border: 2px solid var(--bg-dark);
+    border-radius: 12px;
+    padding: 12px 14px;
+    display: flex;
+    gap: 12px;
+    box-shadow: 2px 2px 0px var(--bg-dark);
+}
+.alert-box.warning {
+    background-color: #FFF3E0; /* Warm peach-yellow */
+}
+.alert-box-icon {
+    font-size: 1.4rem;
+    line-height: 1;
+}
+.alert-box-content strong {
+    font-family: var(--font-title);
+    font-weight: 800;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #D84315;
+    display: block;
+    margin-bottom: 2px;
+}
+.alert-box-content p {
+    font-size: 0.78rem;
+    font-weight: 500;
+    color: #5E35B1;
+    line-height: 1.35;
+}
+
+/* Drawer actions footer */
+.drawer-footer {
+    padding: 16px 20px;
+    border-top: 2px solid #EAE5DD;
+    background-color: var(--bg-primary);
+    flex-shrink: 0;
+}
+.btn-complete-recipe {
+    width: 100%;
+    padding: 14px;
+    font-family: var(--font-title);
+    font-weight: 800;
+    font-size: 1rem;
+    letter-spacing: -0.2px;
+    text-transform: uppercase;
+    background-color: var(--bg-card);
+    border: var(--border-width) solid var(--bg-dark);
+    border-radius: 14px;
+    cursor: pointer;
+    box-shadow: var(--shadow-offset) var(--shadow-offset) 0px var(--bg-dark);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all var(--transition-fast);
+}
+.btn-complete-recipe:hover {
+    background-color: #E0F2F1;
+}
+.btn-complete-recipe:active {
+    transform: translate(3px, 3px);
+    box-shadow: 1px 1px 0px var(--bg-dark);
+}
+.btn-complete-recipe.celebrate {
+    background-color: var(--color-accent-teal);
+    color: white;
+}
+
+/* ==========================================================================
+   VISUAL EFFECTS: CONFETTI AND SPARKLES
+   ========================================================================== */
+.particles-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 2000;
+    overflow: hidden;
+}
+
+.particle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    opacity: 0.9;
+    animation: explode 0.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+}
+
+/* Keyframe Animations */
+@keyframes waveCoffee {
+    0% { transform: rotate(-5deg); }
+    100% { transform: rotate(10deg); }
+}
+
+@keyframes explode {
+    0% {
+        transform: translate(0, 0) scale(1) rotate(0deg);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--tx), var(--ty)) scale(0) rotate(var(--rot));
+        opacity: 0;
+    }
+}

@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Olivias kaffe buddy - Kafferepskrifter og Hacks</title>
+    <meta name="description" content="Lekker mobilvennlig oppskriftsbok og rutinehjelp for baristaer.">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@400;500;600&family=Pacifico&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Simulator Container for Desktop View -->
+    <div class="device-simulator">
+        <div class="phone-frame">
+            <div class="phone-earpiece"></div>
+            <div class="phone-camera"></div>
+            <div class="phone-volume-buttons"></div>
+            <div class="phone-power-button"></div>
+            
+            <div class="phone-screen">
+                <!-- Phone Status Bar -->
+                <div class="status-bar">
+                    <span class="status-time" id="status-time">14:20</span>
+                    <span class="status-carrier">Barista Net ☕</span>
+                    <div class="status-icons">
+                        <span class="status-wifi">📶</span>
+                        <span class="status-battery">🔋 100%</span>
+                    </div>
+                </div>
+
+                <!-- Main Application Wrapper -->
+                <div class="app-container">
+                    
+                    <!-- App Header -->
+                    <header class="app-header">
+                        <div class="header-title-row">
+                            <span class="header-logo">☕</span>
+                            <div>
+                                <h1 class="header-title">Olivias kaffe buddy</h1>
+                                <p class="header-subtitle">Oppskrifter & Hacks</p>
+                            </div>
+                        </div>
+                        
+                        <!-- Search Bar -->
+                        <div class="search-wrapper">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="recipe-search" placeholder="Søk etter kaffe, melk, kakao..." aria-label="Søk etter oppskrifter">
+                            <button id="clear-search" class="clear-search-btn" aria-label="Tøm søk" style="display: none;">✕</button>
+                        </div>
+
+                        <!-- Category Tabs -->
+                        <nav class="category-tabs" aria-label="Kategorier">
+                            <button class="category-tab active" data-category="all" id="tab-all">
+                                🌟 <span class="tab-text">Alle</span>
+                            </button>
+                            <button class="category-tab" data-category="small" id="tab-small">
+                                ☕ <span class="tab-text">Små</span>
+                            </button>
+                            <button class="category-tab" data-category="large" id="tab-large">
+                                🥛 <span class="tab-text">Store</span>
+                            </button>
+                            <button class="category-tab" data-category="cold" id="tab-cold">
+                                🧊 <span class="tab-text">Kald</span>
+                            </button>
+                        </nav>
+                    </header>
+
+                    <!-- Main Recipe Grid Content -->
+                    <main class="app-content" id="recipe-grid-container">
+                        <div class="recipe-grid" id="recipe-grid" role="list">
+                            <!-- JS will inject recipe cards here dynamically -->
+                        </div>
+                        <div class="no-results" id="no-results" style="display: none;">
+                            <div class="no-results-emoji">😢</div>
+                            <h3>Ingen kaffetyper funnet</h3>
+                            <p>Prøv å søke etter noe annet, eller velg en annen kategori!</p>
+                        </div>
+                    </main>
+
+                    <!-- Sticky Bottom Barista Hacks Panel -->
+                    <footer class="app-footer">
+                        <div class="hacks-header">
+                            <span class="hacks-title-emoji">👑</span>
+                            <span class="hacks-title-text">BARISTA HACKS</span>
+                            <div class="carousel-indicators" id="carousel-indicators">
+                                <span class="indicator active" data-slide="0"></span>
+                                <span class="indicator" data-slide="1"></span>
+                                <span class="indicator" data-slide="2"></span>
+                            </div>
+                        </div>
+                        <div class="hacks-carousel">
+                            <div class="hacks-track" id="hacks-track">
+                                <!-- Hack 1 -->
+                                <div class="hack-slide active" data-index="0">
+                                    <div class="hack-card extramoney">
+                                        <div class="hack-card-icon">💰</div>
+                                        <div class="hack-card-body">
+                                            <strong>+3 KR EKSTRA!</strong>
+                                            <p>Husk +3 kr på kassa for havre/spesialmelk, sirup i varm kaffe, eller krem på kakao!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Hack 2 -->
+                                <div class="hack-slide" data-index="1">
+                                    <div class="hack-card steamclean">
+                                        <div class="hack-card-icon">💨</div>
+                                        <div class="hack-card-body">
+                                            <strong>BLÅS UT DAMP!</strong>
+                                            <p>Alltid blås ut damp fra steameren og tørk av med våt klut med en gang etter bruk!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Hack 3 -->
+                                <div class="hack-slide" data-index="2">
+                                    <div class="hack-card smoothpour">
+                                        <div class="hack-card-icon">🌀</div>
+                                        <div class="hack-card-body">
+                                            <strong>SNURR & DUNK!</strong>
+                                            <p>Dunk kannen og snurr melken for å fjerne bobler. Hell i sirkler for lekker latte-art!</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </footer>
+
+                    <!-- Bottom Drawer (Modal for Recipe Details) -->
+                    <div class="drawer-overlay" id="drawer-overlay" aria-hidden="true"></div>
+                    <div class="recipe-drawer" id="recipe-drawer" role="dialog" aria-modal="true" aria-labelledby="drawer-recipe-title">
+                        <div class="drawer-drag-bar"></div>
+                        <div class="drawer-header">
+                            <div class="drawer-header-left">
+                                <span class="drawer-icon" id="drawer-recipe-icon">☕</span>
+                                <div>
+                                    <h2 class="drawer-title" id="drawer-recipe-title">Cappuccino</h2>
+                                    <p class="drawer-subtitle" id="drawer-recipe-tagline">"Mye skum & digg kanel"</p>
+                                </div>
+                            </div>
+                            <button class="drawer-close-btn" id="drawer-close" aria-label="Lukk">✕</button>
+                        </div>
+
+                        <!-- Progress Bar for Recipe Steps Checklist -->
+                        <div class="recipe-progress-container">
+                            <div class="progress-info">
+                                <span class="progress-label">Fremgang:</span>
+                                <span class="progress-percentage" id="progress-text">0%</span>
+                            </div>
+                            <div class="progress-track">
+                                <div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
+                            </div>
+                        </div>
+
+                        <div class="drawer-body">
+                            <!-- Dynamic Content injected here -->
+                            <div class="recipe-checklist-section">
+                                <h3 class="section-title">Oppskrift & Steg</h3>
+                                <p class="checklist-guide">Huk av stegene etter hvert som du lager drikken:</p>
+                                <div class="checklist-items" id="recipe-checklist">
+                                    <!-- Dynamic checklist checkboxes -->
+                                </div>
+                            </div>
+
+                            <div class="recipe-alerts-section" id="recipe-alerts-container">
+                                <!-- Warning alert if applicable -->
+                            </div>
+                        </div>
+
+                        <!-- Drawer Actions -->
+                        <div class="drawer-footer">
+                            <button class="btn-complete-recipe" id="btn-complete-recipe">
+                                <span class="btn-emoji">🎉</span> Ferdig og klar!
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Celebratory Confetti / Sparkle Container inside screen -->
+                    <div class="particles-container" id="particles-container"></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="app.js"></script>
+</body>
+</html>
