@@ -67,8 +67,8 @@ body {
 /* Physical Phone Bezel */
 .phone-frame {
     position: relative;
-    width: 410px;
-    height: 860px;
+    height: min(860px, 85vh);
+    aspect-ratio: 410 / 860;
     background: var(--bg-dark);
     border-radius: 48px;
     padding: 12px;
