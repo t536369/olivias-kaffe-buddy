@@ -657,6 +657,21 @@ body {
     font-style: italic;
     font-weight: 500;
 }
+.drawer-category-badge {
+    font-family: var(--font-title);
+    font-size: 0.65rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    padding: 2px 6px;
+    border-radius: 6px;
+    border: 1.5px solid var(--bg-dark);
+    display: inline-block;
+    vertical-align: middle;
+    margin-left: 6px;
+}
+.drawer-category-badge.small-cup { background-color: var(--color-milk); }
+.drawer-category-badge.large-cup { background-color: #E2D9F3; }
+.drawer-category-badge.iced-cup  { background-color: var(--color-ice); }
 .drawer-close-btn {
     background: #EAE5DD;
     border: 2px solid var(--bg-dark);

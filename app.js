@@ -264,7 +264,7 @@ const RECIPES = [
     {
         id: "traktekaffe",
         name: "Vanlig Traktekaffe",
-        category: "cold",
+        category: "large",
         categoryText: "Filter",
         tagline: "Klassikeren",
         icon: `
@@ -393,15 +393,18 @@ let currentActiveRecipe = null;
 let currentSlideIndex = 0;
 let carouselInterval = null;
 
-// Realtime Status Bar Clock
+// Realtime Status Bar Clock (Guarded safely since status bar was removed)
 function updateClock() {
+    if (!statusTime) return;
     const now = new Date();
     const hours = String(now.getHours()).padStart(2, '0');
     const minutes = String(now.getMinutes()).padStart(2, '0');
     statusTime.textContent = `${hours}:${minutes}`;
 }
-setInterval(updateClock, 1000);
-updateClock();
+if (statusTime) {
+    setInterval(updateClock, 1000);
+    updateClock();
+}
 
 // 5. Card Rendering Engine
 function renderRecipeCards() {
@@ -482,7 +485,13 @@ function openRecipeDrawer(recipe) {
     // Draw header content
     drawerIcon.innerHTML = recipe.icon;
     drawerTitle.textContent = recipe.name;
-    drawerTagline.textContent = `"${recipe.tagline}"`;
+    
+    // Determine category badge class
+    let badgeClass = "small-cup";
+    if (recipe.category === "large") badgeClass = "large-cup";
+    if (recipe.category === "cold") badgeClass = "iced-cup";
+    
+    drawerTagline.innerHTML = `"${recipe.tagline}" &bull; <span class="drawer-category-badge ${badgeClass}">${recipe.categoryText}</span>`;
 
     // Draw interactive checklist steps
     recipeChecklist.innerHTML = "";
