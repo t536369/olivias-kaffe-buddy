@@ -425,6 +425,11 @@ body {
 .recipe-card:hover .recipe-card-icon-container {
     transform: scale(1.15) rotate(-3deg);
 }
+.coffee-svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
 
 /* Drink Card Typography */
 .recipe-card-title {
@@ -641,7 +646,12 @@ body {
     gap: 12px;
 }
 .drawer-icon {
-    font-size: 2.2rem;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
 }
 .drawer-title {
     font-family: var(--font-title);
