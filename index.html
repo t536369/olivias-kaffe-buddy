@@ -69,6 +69,45 @@
                             <h3>Ingen kaffetyper funnet</h3>
                             <p>Prøv å søke etter noe annet, eller velg en annen kategori!</p>
                         </div>
+
+                        <!-- Stengerutiner Seksjon -->
+                        <div class="closing-routines-section" id="closing-routines-section">
+                            <h2 class="closing-section-title">🔒 Stengerutiner</h2>
+                            
+                            <div class="closing-routines-grid">
+                                <!-- Card 1: Stengerutine før 17:00 -->
+                                <div class="recipe-card routine-card" id="btn-routine-before" role="button" tabindex="0" aria-label="Stengerutine før 17:00">
+                                    <span class="card-category-badge large-cup">Rutine</span>
+                                    <div class="recipe-card-icon-container">
+                                        <span style="font-size: 3rem; line-height: 1;">🧹</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="recipe-card-title">Før kl. 17:00</h3>
+                                        <p class="recipe-card-tagline">"Oppvask, kopper & vasking"</p>
+                                    </div>
+                                </div>
+                                
+                                <!-- Card 2: Stengerutine etter 17:00 -->
+                                <div class="recipe-card routine-card" id="btn-routine-after" role="button" tabindex="0" aria-label="Stengerutine etter 17:00">
+                                    <span class="card-category-badge iced-cup">Rutine</span>
+                                    <div class="recipe-card-icon-container">
+                                        <span style="font-size: 3rem; line-height: 1;">🔑</span>
+                                    </div>
+                                    <div>
+                                        <h3 class="recipe-card-title">Etter kl. 17:00</h3>
+                                        <p class="recipe-card-tagline">"Sirup, klorin & låsing"</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Skjulte suksessmeldinger som fortsatt kan tennes under knappene hvis ønskelig -->
+                            <div class="routine-success-msg" id="msg-before-success" style="display: none; margin-top: 12px;">
+                                🎉 Alt klargjort før kl 17:00! Kjempegod jobb!
+                            </div>
+                            <div class="routine-success-msg" id="msg-after-success" style="display: none; margin-top: 12px;">
+                                🏆 Døra er låst og alt er stengt perfekt! Nyt kvelden! 🌟
+                            </div>
+                        </div>
                     </main>
 
                     <!-- Sticky Bottom Barista Hacks Panel -->
@@ -147,8 +186,8 @@
                         <div class="drawer-body">
                             <!-- Dynamic Content injected here -->
                             <div class="recipe-checklist-section">
-                                <h3 class="section-title">Oppskrift & Steg</h3>
-                                <p class="checklist-guide">Huk av stegene etter hvert som du lager drikken:</p>
+                                <h3 class="section-title" id="drawer-section-title">Oppskrift & Steg</h3>
+                                <p class="checklist-guide" id="drawer-checklist-guide">Huk av stegene etter hvert som du lager drikken:</p>
                                 <div class="checklist-items" id="recipe-checklist">
                                     <!-- Dynamic checklist checkboxes -->
                                 </div>
