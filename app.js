@@ -375,6 +375,8 @@ const drawerClose = document.getElementById("drawer-close");
 const drawerIcon = document.getElementById("drawer-recipe-icon");
 const drawerTitle = document.getElementById("drawer-recipe-title");
 const drawerTagline = document.getElementById("drawer-recipe-tagline");
+const drawerSectionTitle = document.getElementById("drawer-section-title");
+const drawerChecklistGuide = document.getElementById("drawer-checklist-guide");
 const recipeChecklist = document.getElementById("recipe-checklist");
 const recipeAlertsContainer = document.getElementById("recipe-alerts-container");
 const progressBar = document.getElementById("progress-bar");
@@ -393,6 +395,33 @@ let currentActiveRecipe = null;
 let currentSlideIndex = 0;
 let carouselInterval = null;
 
+// Stengerutiner DOM
+const btnRoutineBefore = document.getElementById("btn-routine-before");
+const btnRoutineAfter = document.getElementById("btn-routine-after");
+const msgBeforeSuccess = document.getElementById("msg-before-success");
+const msgAfterSuccess = document.getElementById("msg-after-success");
+
+// Stengerutiner Tilstand (persistent i localStorage)
+let checkedBefore17 = [];
+try {
+    const stored = localStorage.getItem("checked_before_17");
+    if (stored) checkedBefore17 = JSON.parse(stored);
+    if (!Array.isArray(checkedBefore17)) checkedBefore17 = [];
+} catch (e) {
+    checkedBefore17 = [];
+}
+
+let checkedAfter17 = [];
+try {
+    const stored = localStorage.getItem("checked_after_17");
+    if (stored) checkedAfter17 = JSON.parse(stored);
+    if (!Array.isArray(checkedAfter17)) checkedAfter17 = [];
+} catch (e) {
+    checkedAfter17 = [];
+}
+
+let currentActiveRoutineType = null; // "before", "after", eller null
+
 // Realtime Status Bar Clock (Guarded safely since status bar was removed)
 function updateClock() {
     if (!statusTime) return;
@@ -409,6 +438,16 @@ if (statusTime) {
 // 5. Card Rendering Engine
 function renderRecipeCards() {
     recipeGrid.innerHTML = "";
+    
+    // Skjul/vis stengerutiner basert på søk eller filter
+    const closingRoutinesSection = document.getElementById("closing-routines-section");
+    if (closingRoutinesSection) {
+        if (searchQuery !== "" || currentFilter !== "all") {
+            closingRoutinesSection.style.display = "none";
+        } else {
+            closingRoutinesSection.style.display = "block";
+        }
+    }
     
     // Filter recipes
     const filteredRecipes = RECIPES.filter(recipe => {
@@ -493,6 +532,10 @@ function openRecipeDrawer(recipe) {
     
     drawerTagline.innerHTML = `"${recipe.tagline}" &bull; <span class="drawer-category-badge ${badgeClass}">${recipe.categoryText}</span>`;
 
+    // Sett oppskriftstitler i skuffen
+    if (drawerSectionTitle) drawerSectionTitle.textContent = "Oppskrift & Steg";
+    if (drawerChecklistGuide) drawerChecklistGuide.textContent = "Huk av stegene etter hvert som du lager drikken:";
+
     // Draw interactive checklist steps
     recipeChecklist.innerHTML = "";
     recipe.steps.forEach((stepText, idx) => {
@@ -544,6 +587,7 @@ function closeRecipeDrawer() {
     drawer.classList.remove("active");
     drawer.setAttribute("aria-hidden", "true");
     currentActiveRecipe = null;
+    currentActiveRoutineType = null;
 }
 
 // Recalculates checkboxes completed inside active recipe card drawer
@@ -732,8 +776,318 @@ document.addEventListener("DOMContentLoaded", () => {
     // Initialize & Fire auto-slide carousel timer
     startCarouselTimer();
 
+    // ----------------------------------------------------------------------
+    // STENGERUTINER LOGIKK (Før & Etter 17:00)
+    // ----------------------------------------------------------------------
+    
+    // Klikk-lyttere for de nye stengerutine-kortene (knappene)
+    if (btnRoutineBefore) {
+        btnRoutineBefore.addEventListener("click", () => {
+            playClickSound();
+            // Tactile pressed state visual delay
+            btnRoutineBefore.classList.add("pressed");
+            setTimeout(() => {
+                btnRoutineBefore.classList.remove("pressed");
+                openRoutineDrawer("before");
+            }, 80);
+        });
+        
+        btnRoutineBefore.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                playClickSound();
+                btnRoutineBefore.classList.add("pressed");
+                setTimeout(() => {
+                    btnRoutineBefore.classList.remove("pressed");
+                    openRoutineDrawer("before");
+                }, 80);
+            }
+        });
+    }
+
+    if (btnRoutineAfter) {
+        btnRoutineAfter.addEventListener("click", () => {
+            playClickSound();
+            // Tactile pressed state visual delay
+            btnRoutineAfter.classList.add("pressed");
+            setTimeout(() => {
+                btnRoutineAfter.classList.remove("pressed");
+                openRoutineDrawer("after");
+            }, 80);
+        });
+
+        btnRoutineAfter.addEventListener("keydown", (e) => {
+            if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                playClickSound();
+                btnRoutineAfter.classList.add("pressed");
+                setTimeout(() => {
+                    btnRoutineAfter.classList.remove("pressed");
+                    openRoutineDrawer("after");
+                }, 80);
+            }
+        });
+    }
+
+    // Sjekk lagret stengestatus ved oppstart og tenn suksessbokser hvis fullført
+    if (typeof checkInitialRoutineCompletion === "function") {
+        checkInitialRoutineCompletion();
+    }
+
     // Enable Web Audio context on any first click in body
     document.body.addEventListener("click", () => {
         initAudio();
     }, { once: true });
 });
+
+// ==========================================================================
+// STENGERUTINER DATABASE & LOGIKK (GLOBAL SCOPE)
+// ==========================================================================
+
+const ROUTINES_BEFORE_17 = [
+    { id: "b1", text: "Fyll på: kaffekopper/lokk 🥤" },
+    { id: "b2", text: "Fyll på: brus 🥤" },
+    { id: "b3", text: "Fyll på: melk 🥛" },
+    { id: "b4", text: "Fyll på: servietter osv.. 🧻" },
+    { id: "b5", text: "Ferdigstille oppvasken på kjøkkenet 🧼" },
+    { id: "b6", text: "Pusse glass på salgsdisk og utside sandwichskap ✨" },
+    { id: "b7", text: "Vaske overflater 🧽" },
+    { id: "b8", text: "Vask over ovnene og slå av 🔌" },
+    { id: "b9", text: "Kost/vask gulvet 🧹" }
+];
+
+const ROUTINES_AFTER_17 = [
+    { id: "a1", text: "Ta inn åpningsskiltet 🚪" },
+    { id: "a2", text: "Slå av speedovn, og åpne døren under nedkjøling 🌬️" },
+    { id: "a3", text: "Start renseprogram på espressomaskin (gjør andre ting i mellomtiden) ☕" },
+    { id: "a4", text: "Ta svinn: fordel i flere poser og sett på kjøl 🍎" },
+    { id: "a5", text: "Ta svinn: Legg plain croissanter i oransje esker i fryseren (blir mandelcroissanter!) 🥐" },
+    { id: "a6", text: "Koste brødhyller og brødmaskin 🍞" },
+    { id: "a7", text: "Sett brett på plass (Husk: skal ALDRI i vaskemaskin! ⚠️)" },
+    { id: "a8", text: "Husk: Klorin i vaskene! 🧽" },
+    { id: "a9", text: "Husk: Skyll klutene skikkelig! 🧼" },
+    { id: "a10", text: "Koste og vaske over salgsdisk ✨" },
+    { id: "a11", text: "Hell ut kaffe, skyll kaffekanner og kast kaffefilter ☕" },
+    { id: "a12", text: "Vaske pizzaklyper 🍕" },
+    { id: "a13", text: "Vaske og pusse sandwich-disk, og slå av lyset 💡" },
+    { id: "a14", text: "Koste og vaske gulvet 🧹" },
+    { id: "a15", text: "Ta søppel ut i container (restavfall og papp – papp legges flatt) 🗑️" },
+    { id: "a16", text: "Slå av vifte (Husk å skru av vifte! 🌬️)" },
+    { id: "a17", text: "Slå av lys bak og hovedlys 💡" },
+    { id: "a18", text: "Husk: Klor ved sirupen! 🧴" },
+    { id: "a19", text: "Husk: Kopp under alle sirupene! 🥤" },
+    { id: "a20", text: "Husk: Plastfolie på siruptutene! 🍬" },
+    { id: "a21", text: "Låse døra og legge nøkkelen i nøkkelboksen 🔑" }
+];
+
+function openRoutineDrawer(type) {
+    currentActiveRoutineType = type;
+    currentActiveRecipe = null; // Tøm aktiv oppskrift slik at Fullfør-knappen vet hva som lukkes
+
+    // Nullstill knappe-stilene
+    btnCompleteRecipe.classList.remove("celebrate");
+    btnCompleteRecipe.innerHTML = `<span class="btn-emoji">🎉</span> Ferdig og klar!`;
+
+    const routinesList = type === "before" ? ROUTINES_BEFORE_17 : ROUTINES_AFTER_17;
+    const checkedList = type === "before" ? checkedBefore17 : checkedAfter17;
+    const routineTitle = type === "before" ? "Stengerutine før 17:00" : "Stengerutine etter 17:00";
+    const routineIcon = type === "before" ? "🧹" : "🔑";
+    const routineTagline = type === "before" ? "Oppvask, kopper & vasking" : "Sirup, klorin & låsing";
+    const badgeClass = type === "before" ? "large-cup" : "iced-cup";
+
+    // Sett opp header-innholdet
+    drawerIcon.innerHTML = `<span style="font-size: 2.8rem; display: inline-block; line-height: 1;">${routineIcon}</span>`;
+    drawerTitle.textContent = routineTitle;
+    drawerTagline.innerHTML = `"${routineTagline}" &bull; <span class="drawer-category-badge ${badgeClass}">Rutine</span>`;
+
+    // Sett stengerutinetitler i skuffen
+    if (drawerSectionTitle) drawerSectionTitle.textContent = "Stengepunkter";
+    if (drawerChecklistGuide) drawerChecklistGuide.textContent = "Huk av punktene etter hvert som de er gjennomført:";
+
+    // Generer den interaktive sjekklisten
+    recipeChecklist.innerHTML = "";
+    routinesList.forEach((item) => {
+        const isChecked = checkedList.includes(item.id);
+        const stepLabel = document.createElement("label");
+        stepLabel.className = `recipe-step ${isChecked ? 'checked' : ''}`;
+        
+        let textHTML = item.text;
+        if (textHTML.startsWith("Husk:")) {
+            textHTML = `<strong style="color: #D84315;">Husk:</strong> ${textHTML.substring(5)}`;
+        } else if (textHTML.includes(":")) {
+            const parts = textHTML.split(":");
+            textHTML = `<strong>${parts[0]}:</strong>${parts[1]}`;
+        }
+
+        stepLabel.innerHTML = `
+            <div class="step-checkbox"></div>
+            <span class="step-text">${textHTML}</span>
+        `;
+        
+        // Klikk-håndtering med taktile lyder
+        stepLabel.addEventListener("click", (e) => {
+            e.preventDefault(); // Unngå dobbeltrigger
+            playClickSound();
+            stepLabel.classList.toggle("checked");
+            
+            let currentChecked = type === "before" ? checkedBefore17 : checkedAfter17;
+            if (currentChecked.includes(item.id)) {
+                currentChecked = currentChecked.filter(id => id !== item.id);
+            } else {
+                currentChecked.push(item.id);
+            }
+            
+            if (type === "before") {
+                checkedBefore17 = currentChecked;
+                localStorage.setItem("checked_before_17", JSON.stringify(checkedBefore17));
+            } else {
+                checkedAfter17 = currentChecked;
+                localStorage.setItem("checked_after_17", JSON.stringify(checkedAfter17));
+            }
+            
+            updateRoutineProgress();
+        });
+
+        recipeChecklist.appendChild(stepLabel);
+    });
+
+    // Injisér gule huskebokser hvis det er stengerutinen etter 17:00
+    recipeAlertsContainer.innerHTML = "";
+    if (type === "after") {
+        const alertDiv = document.createElement("div");
+        alertDiv.className = "alert-box warning";
+        alertDiv.innerHTML = `
+            <span class="alert-box-icon">🚨</span>
+            <div class="alert-box-content">
+                <strong>Husk ved stenging!</strong>
+                <p>Klorin i vaskene, skyll klutene skikkelig, og husk klor ved sirupene med kopper under sirupen og plastfolie på siruptutene!</p>
+            </div>
+        `;
+        recipeAlertsContainer.appendChild(alertDiv);
+    }
+
+    // Oppdater fremdriftsindikatoren
+    updateRoutineProgress();
+
+    // Glid skuffen opp
+    drawerOverlay.classList.add("active");
+    drawer.classList.add("active");
+    drawer.setAttribute("aria-hidden", "false");
+}
+
+function updateRoutineProgress() {
+    const type = currentActiveRoutineType;
+    if (!type) return;
+
+    const routinesList = type === "before" ? ROUTINES_BEFORE_17 : ROUTINES_AFTER_17;
+    const currentChecked = type === "before" ? checkedBefore17 : checkedAfter17;
+    
+    const totalSteps = routinesList.length;
+    const checkedSteps = currentChecked.length;
+    
+    const percentage = totalSteps > 0 ? Math.round((checkedSteps / totalSteps) * 100) : 0;
+
+    progressBar.style.width = `${percentage}%`;
+    progressText.textContent = `${percentage}%`;
+
+    // Hvis alle punktene er huket av
+    if (percentage === 100) {
+        btnCompleteRecipe.classList.add("celebrate");
+        btnCompleteRecipe.innerHTML = `🏆 Fullført! Nyt kvelden! 🌟`;
+        
+        if (type === "before" && msgBeforeSuccess) {
+            if (msgBeforeSuccess.style.display !== "block") {
+                msgBeforeSuccess.style.display = "block";
+                playFanfareSound();
+            }
+        } else if (type === "after" && msgAfterSuccess) {
+            if (msgAfterSuccess.style.display !== "block") {
+                msgAfterSuccess.style.display = "block";
+                playFanfareSound();
+            }
+        }
+    } else {
+        btnCompleteRecipe.classList.remove("celebrate");
+        btnCompleteRecipe.innerHTML = `<span class="btn-emoji">🎉</span> Fortsett stengingen...`;
+        
+        if (type === "before" && msgBeforeSuccess) {
+            msgBeforeSuccess.style.display = "none";
+        } else if (type === "after" && msgAfterSuccess) {
+            msgAfterSuccess.style.display = "none";
+        }
+    }
+}
+
+function checkInitialRoutineCompletion() {
+    const beforeAllDone = ROUTINES_BEFORE_17.every(item => checkedBefore17.includes(item.id));
+    if (beforeAllDone && msgBeforeSuccess) {
+        msgBeforeSuccess.style.display = "block";
+    } else if (msgBeforeSuccess) {
+        msgBeforeSuccess.style.display = "none";
+    }
+
+    const afterAllDone = ROUTINES_AFTER_17.every(item => checkedAfter17.includes(item.id));
+    if (afterAllDone && msgAfterSuccess) {
+        msgAfterSuccess.style.display = "block";
+    } else if (msgAfterSuccess) {
+        msgAfterSuccess.style.display = "none";
+    }
+}
+
+function playFanfareSound() {
+    if (!audioCtx) initAudio();
+    if (!audioCtx) return; // AudioContext utilgjengelig eller blokkert
+
+    const now = audioCtx.currentTime;
+
+    // Triumferende meloditoner (C5 -> E5 -> G5 -> C6)
+    const notes = [
+        { freq: 523.25, time: 0.0, duration: 0.12 }, // C5
+        { freq: 659.25, time: 0.12, duration: 0.12 }, // E5
+        { freq: 783.99, time: 0.24, duration: 0.12 }, // G5
+        { freq: 1046.50, time: 0.36, duration: 0.24 } // C6
+    ];
+
+    notes.forEach(note => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        osc.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(note.freq, now + note.time);
+        
+        gain.gain.setValueAtTime(0, now + note.time);
+        gain.gain.linearRampToValueAtTime(0.12, now + note.time + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.01, now + note.time + note.duration);
+        
+        osc.start(now + note.time);
+        osc.stop(now + note.time + note.duration);
+    });
+
+    // Detunede sagtannbølger filtrert gjennom et lavpass-filter for fet trompet/messing-lyd
+    const chordNotes = [523.25, 659.25, 783.99, 1046.50];
+    chordNotes.forEach((freq, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+        
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(audioCtx.destination);
+        
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(freq + (idx * 0.5), now + 0.55); // lett detune
+        
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1200, now + 0.55);
+        filter.Q.setValueAtTime(1.2, now + 0.55);
+
+        gain.gain.setValueAtTime(0, now + 0.55);
+        gain.gain.linearRampToValueAtTime(0.05, now + 0.57);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.55 + 1.2);
+        
+        osc.start(now + 0.55);
+        osc.stop(now + 0.55 + 1.3);
+    });
+}

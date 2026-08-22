@@ -974,3 +974,66 @@ body {
         opacity: 0;
     }
 }
+
+/* ==========================================================================
+   CLOSING ROUTINES SECTION (Stengerutiner)
+   ========================================================================== */
+.closing-routines-section {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 3px dashed var(--bg-dark);
+    margin-bottom: 24px;
+}
+
+.closing-section-title {
+    font-family: var(--font-title);
+    font-weight: 800;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    letter-spacing: -0.3px;
+    margin-bottom: 16px;
+    color: var(--bg-dark);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Closing Routine Cards Grid */
+.closing-routines-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+/* Hover rotation animation for routine icon, similar to recipe icons */
+.routine-card:hover .recipe-card-icon-container {
+    transform: scale(1.15) rotate(-3deg);
+}
+
+/* Success banner */
+.routine-success-msg {
+    background-color: #E0F2F1;
+    border: var(--border-width) solid var(--color-accent-teal);
+    border-radius: var(--border-radius-medium);
+    padding: 14px 16px;
+    text-align: center;
+    font-family: var(--font-title);
+    font-weight: 800;
+    font-size: 0.95rem;
+    color: #004D40;
+    box-shadow: 3px 3px 0px var(--color-accent-teal);
+    animation: successPulse 2s infinite ease-in-out;
+}
+
+@keyframes successPulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.02);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
